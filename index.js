@@ -130,13 +130,81 @@ var database = require("./database");
 //   .catch((err) => {
 //     console.log(err);
 //   });
-database
-  .select(["games.*", "estudios.nome as etd_nome"])
-  .table("games")
-  .innerJoin("estudios", "estudios.game_id", "games.id")
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+
+// database
+//   .select(["games.*", "estudios.nome as etd_nome"])
+//   .table("games")
+//   .innerJoin("estudios", "estudios.game_id", "games.id").where('games.id', 254)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+//UM PARA MUITOS
+// database
+//   .select(["games.id", "games.nome", "games.preco", "estudios.nome as est_nome"])
+//   .table("games")
+//   .innerJoin("estudios", "estudios.game_id", "games.id")
+//   .then((data) => {
+//     var estudioGameArray = data;
+//     var game = {
+//       id: 0,
+//       nome: "",
+//       estudios: [],
+//     };
+
+//     (game.id = data[0].id),
+//       (game.nome = data[0].nome),
+//       data.forEach((estudio) => {
+//         game.estudios.push({ nome: estudio.est_nome });
+//       });
+
+//     console.log(game);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+//MUITO PARA MUITOS
+// database
+//   .select(["estudios.nome as estudio_nome", "games.nome as game_nome", "games.preco"])
+//   .table("games_estudios")
+//   .innerJoin("games", "games.id", "games_estudios.game_id")
+//   .innerJoin("estudios", "estudios.id", "games_estudios.estudio_id")
+//   .where("games.id", 254)
+//   .then((data) => {
+//     var game = {
+//       nome: "",
+//       preco: "",
+//       estudios: [],
+//     };
+
+//     game.nome = data[0].game_nome;
+//     game.preco = data[0].preco
+
+//     data.forEach((estudio) => {
+//       game.estudios.push({
+//         nome: estudio.estudio_nome,
+//       });
+//     });
+//     console.log(game);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+//TRANSACAO
+async function transacao() {
+  try {
+    await database.transaction(async (trans) => {
+      await database.insert({ nome: "Mojang" }).table("estudios");
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+transacao();
